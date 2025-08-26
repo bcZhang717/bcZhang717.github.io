@@ -1,9 +1,14 @@
 body {
-    cursor:url('../img/normal.cur'),
+    cursor: url('../img/normal.cur'),
     default;
 }
-a,
-link {
-    cursor:url('../img/link.cur'),
+
+a, link {
+    cursor: url('../img/link.cur'),
+    default;
+}
+
+p, li, pre, code, input, textarea {
+    cursor: url('../img/text.cur'),
     default;
 }
