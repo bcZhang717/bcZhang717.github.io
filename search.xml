@@ -126,31 +126,6 @@
     
     
     <entry>
-      <title>MySQL 中 SQL 的执行流程与编写顺序</title>
-      <link href="/2025/08/24/MySQL/MySQL%20%E4%B8%AD%20SQL%20%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E4%B8%8E%E7%BC%96%E5%86%99%E9%A1%BA%E5%BA%8F/"/>
-      <url>/2025/08/24/MySQL/MySQL%20%E4%B8%AD%20SQL%20%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E4%B8%8E%E7%BC%96%E5%86%99%E9%A1%BA%E5%BA%8F/</url>
-      
-        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="一条-SQL-语句是如何执行的？"><a href="#一条-SQL-语句是如何执行的？" class="headerlink" title="一条 SQL 语句是如何执行的？"></a>一条 SQL 语句是如何执行的？</h1><p>先说结论：一条 SQL 语句的执行需要经历：<strong>连接器</strong>、<strong>缓存层</strong>、<strong>解析器</strong>、<strong>优化器</strong>、<strong>执行器</strong> 五个步骤。下面以一个买鸡蛋的例子来进行说明 SQL 的具体执行流程。</p><h2 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h2><p>首先买鸡蛋的第一步就是：让妈妈先找到我，给我一个去买鸡蛋的指令。</p><p>相应的，我们需要执行 SQL，第一步就是先连接上数据库，通过网络把 SQL 语句传输过去，然后数据库才能帮我执行 SQL 语句。</p><p>这就是连接器的工作，连接器就是客户端与数据库之间进行连接，主要步骤是：</p><ul><li>先进行 TCP 的三次握手与数据库建立连接</li><li>校验客户端的用户名与密码是否正确，不正确则报错</li><li>做权限校验，判断当前用户是否有权限访问数据库</li></ul><h2 id="缓存层"><a href="#缓存层" class="headerlink" title="缓存层"></a>缓存层</h2><p>现在我收到了买鸡蛋的指令，下一步就直接出门去买吗？当然不是！我们应该先看看家里还有没有剩下的鸡蛋，有就直接用呗，没有了才去买。</p><p>相应的，连接上数据库之后，需要先查询缓存。以传输的 SQL 语句作为 key，以查询的结果作为 value，如果缓存中存在 value，那就说明之前执行过一样的SQL 语句，那我就直接拿来用呗，不用重复执行了。</p><p><strong>为什么 MySQL 会有缓存存在？</strong></p><p>程序有时间局部性，当某一段代码或者某一段指令被执行时，很有可能这段代码还会被重复执行。或者说某一段内存位置被访问时，很有可能这个内存位置还会被再次访问，这是因为代码中会存在大量的循环、递归等操作，导致某段指令被重复执行，这就是时间局部性的原理。所以一条被执行过的 SQL，在未来很有可能被再次执行，这就是为啥要对 SQL 做缓存。</p><p><strong>为什么 MySQL 8.0 又去掉了缓存？</strong></p><p>因为一旦表数据一变化，那 SQL 执行的结果就有可能不一样，所以表数据变化时就应该删除缓存。而实际上很多 SQL 在执行的时候，where 条件是会不断变化的，这就导致了 SQL 看着都差不多，但是条件稍微不一样它就走不了缓存，所以查询缓存的命中率并不高，MySQL 在 8.0 就把查询缓存去掉了。</p><h2 id="解析层"><a href="#解析层" class="headerlink" title="解析层"></a>解析层</h2><p>回到买鸡蛋的问题，现在家里确定没有鸡蛋了，要去买。但是还需要思考一个问题：我想要吃鸡蛋吗？我不想吃就要告诉我妈妈不买了，我想吃就要考虑买多少个。</p><p>相应的，SQL 语句下一步到达解析器。解析器就是判断 SQL 语句的具体想法，分为三步：</p><ul><li><p>词法分析。拆分 SQL 语句的关键词，比如 <code>select</code> 、<code>from</code> 、<code>where</code> 、<code>order by</code> 等。</p></li><li><p>语法分析。判断 SQL 语句的编写语法是否是正确的，不正确就报错；正确的话就构建语法解析树，方便后续获得表名、字段名。</p></li><li><p>检查表，判断字段是否存在。</p></li></ul><h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><p>现在我确定要买鸡蛋，我确实想吃鸡蛋，我也确定了要买 20 个鸡蛋。接下来就需要计划怎么买了：是去超市买还是去菜市场买？是骑车去买还是坐公交车去买？</p><p>相应的，SQL 语句接下来就到了优化器。优化器的职责就是给 SQL 制定一个计划：怎么执行 SQL 是最快的，是走索引还是全表扫描，走索引的话走哪个索引？</p><h2 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h2><p>现在我的计划完成了，然后就是执行计划：骑车去菜市场买鸡蛋。所以我就还需要跟卖鸡蛋的老板交流，付钱。</p><p>相应的，SQL 语句最后抵达执行器。执行器的任务就是与存储引擎层进行交互，执行相应的 SQL 语句，然后从存储引擎中拿到结果返回。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一条 SQL 语句的执行顺序可以以下图作为参考：<br><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250824171942925.png" alt="img" style="zoom:57%;" /></p><h1 id="SQL-语句顺序"><a href="#SQL-语句顺序" class="headerlink" title="SQL 语句顺序"></a>SQL 语句顺序</h1><h2 id="SQL-编写顺序"><a href="#SQL-编写顺序" class="headerlink" title="SQL 编写顺序"></a>SQL 编写顺序</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段名</span><br><span class="line"><span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">join</span> 多表查询</span><br><span class="line"><span class="keyword">where</span> 条件</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 分组</span><br><span class="line"><span class="keyword">having</span> 分组后过滤</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 查询结果排序</span><br><span class="line">limit 查询结果分页</span><br></pre></td></tr></table></figure><h2 id="SQL-执行顺序"><a href="#SQL-执行顺序" class="headerlink" title="SQL 执行顺序"></a>SQL 执行顺序</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">join</span> 多表查询</span><br><span class="line"><span class="keyword">where</span> 查询条件</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 分组</span><br><span class="line"><span class="keyword">having</span> 分组后过滤</span><br><span class="line"><span class="keyword">select</span> 返回字段名</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 查询结果排序</span><br><span class="line">limit 查询结果分页</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> MySQL </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> MySQL </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Redis 持久化机制</title>
       <link href="/2025/08/24/Redis/Redis%20%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6/"/>
       <url>/2025/08/24/Redis/Redis%20%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6/</url>
@@ -211,6 +186,31 @@
     
     
     <entry>
+      <title>MySQL 中 SQL 的执行流程与编写顺序</title>
+      <link href="/2025/08/24/MySQL/MySQL%20%E4%B8%AD%20SQL%20%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E4%B8%8E%E7%BC%96%E5%86%99%E9%A1%BA%E5%BA%8F/"/>
+      <url>/2025/08/24/MySQL/MySQL%20%E4%B8%AD%20SQL%20%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E4%B8%8E%E7%BC%96%E5%86%99%E9%A1%BA%E5%BA%8F/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="一条-SQL-语句是如何执行的？"><a href="#一条-SQL-语句是如何执行的？" class="headerlink" title="一条 SQL 语句是如何执行的？"></a>一条 SQL 语句是如何执行的？</h1><p>先说结论：一条 SQL 语句的执行需要经历：<strong>连接器</strong>、<strong>缓存层</strong>、<strong>解析器</strong>、<strong>优化器</strong>、<strong>执行器</strong> 五个步骤。下面以一个买鸡蛋的例子来进行说明 SQL 的具体执行流程。</p><h2 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h2><p>首先买鸡蛋的第一步就是：让妈妈先找到我，给我一个去买鸡蛋的指令。</p><p>相应的，我们需要执行 SQL，第一步就是先连接上数据库，通过网络把 SQL 语句传输过去，然后数据库才能帮我执行 SQL 语句。</p><p>这就是连接器的工作，连接器就是客户端与数据库之间进行连接，主要步骤是：</p><ul><li>先进行 TCP 的三次握手与数据库建立连接</li><li>校验客户端的用户名与密码是否正确，不正确则报错</li><li>做权限校验，判断当前用户是否有权限访问数据库</li></ul><h2 id="缓存层"><a href="#缓存层" class="headerlink" title="缓存层"></a>缓存层</h2><p>现在我收到了买鸡蛋的指令，下一步就直接出门去买吗？当然不是！我们应该先看看家里还有没有剩下的鸡蛋，有就直接用呗，没有了才去买。</p><p>相应的，连接上数据库之后，需要先查询缓存。以传输的 SQL 语句作为 key，以查询的结果作为 value，如果缓存中存在 value，那就说明之前执行过一样的SQL 语句，那我就直接拿来用呗，不用重复执行了。</p><p><strong>为什么 MySQL 会有缓存存在？</strong></p><p>程序有时间局部性，当某一段代码或者某一段指令被执行时，很有可能这段代码还会被重复执行。或者说某一段内存位置被访问时，很有可能这个内存位置还会被再次访问，这是因为代码中会存在大量的循环、递归等操作，导致某段指令被重复执行，这就是时间局部性的原理。所以一条被执行过的 SQL，在未来很有可能被再次执行，这就是为啥要对 SQL 做缓存。</p><p><strong>为什么 MySQL 8.0 又去掉了缓存？</strong></p><p>因为一旦表数据一变化，那 SQL 执行的结果就有可能不一样，所以表数据变化时就应该删除缓存。而实际上很多 SQL 在执行的时候，where 条件是会不断变化的，这就导致了 SQL 看着都差不多，但是条件稍微不一样它就走不了缓存，所以查询缓存的命中率并不高，MySQL 在 8.0 就把查询缓存去掉了。</p><h2 id="解析层"><a href="#解析层" class="headerlink" title="解析层"></a>解析层</h2><p>回到买鸡蛋的问题，现在家里确定没有鸡蛋了，要去买。但是还需要思考一个问题：我想要吃鸡蛋吗？我不想吃就要告诉我妈妈不买了，我想吃就要考虑买多少个。</p><p>相应的，SQL 语句下一步到达解析器。解析器就是判断 SQL 语句的具体想法，分为三步：</p><ul><li><p>词法分析。拆分 SQL 语句的关键词，比如 <code>select</code> 、<code>from</code> 、<code>where</code> 、<code>order by</code> 等。</p></li><li><p>语法分析。判断 SQL 语句的编写语法是否是正确的，不正确就报错；正确的话就构建语法解析树，方便后续获得表名、字段名。</p></li><li><p>检查表，判断字段是否存在。</p></li></ul><h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><p>现在我确定要买鸡蛋，我确实想吃鸡蛋，我也确定了要买 20 个鸡蛋。接下来就需要计划怎么买了：是去超市买还是去菜市场买？是骑车去买还是坐公交车去买？</p><p>相应的，SQL 语句接下来就到了优化器。优化器的职责就是给 SQL 制定一个计划：怎么执行 SQL 是最快的，是走索引还是全表扫描，走索引的话走哪个索引？</p><h2 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h2><p>现在我的计划完成了，然后就是执行计划：骑车去菜市场买鸡蛋。所以我就还需要跟卖鸡蛋的老板交流，付钱。</p><p>相应的，SQL 语句最后抵达执行器。执行器的任务就是与存储引擎层进行交互，执行相应的 SQL 语句，然后从存储引擎中拿到结果返回。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一条 SQL 语句的执行顺序可以以下图作为参考：<br><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250824171942925.png" alt="img" style="zoom:57%;" /></p><h1 id="SQL-语句顺序"><a href="#SQL-语句顺序" class="headerlink" title="SQL 语句顺序"></a>SQL 语句顺序</h1><h2 id="SQL-编写顺序"><a href="#SQL-编写顺序" class="headerlink" title="SQL 编写顺序"></a>SQL 编写顺序</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段名</span><br><span class="line"><span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">join</span> 多表查询</span><br><span class="line"><span class="keyword">where</span> 条件</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 分组</span><br><span class="line"><span class="keyword">having</span> 分组后过滤</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 查询结果排序</span><br><span class="line">limit 查询结果分页</span><br></pre></td></tr></table></figure><h2 id="SQL-执行顺序"><a href="#SQL-执行顺序" class="headerlink" title="SQL 执行顺序"></a>SQL 执行顺序</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">join</span> 多表查询</span><br><span class="line"><span class="keyword">where</span> 查询条件</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 分组</span><br><span class="line"><span class="keyword">having</span> 分组后过滤</span><br><span class="line"><span class="keyword">select</span> 返回字段名</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 查询结果排序</span><br><span class="line">limit 查询结果分页</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>分布式锁介绍及基本原理</title>
       <link href="/2025/08/23/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/"/>
       <url>/2025/08/23/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</url>
@@ -227,9 +227,9 @@
       
         <tags>
             
-            <tag> Redis </tag>
-            
             <tag> 分布式锁 </tag>
+            
+            <tag> Redis </tag>
             
             <tag> Redisson </tag>
             
