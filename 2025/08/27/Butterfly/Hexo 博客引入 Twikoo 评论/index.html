@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hexo 博客引入 Twikoo 评论 | 欢迎来到爱谦 717 的博客</title><meta name="author" content="bcZhang"><meta name="copyright" content="bcZhang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 Butterfly 官方文档的评论模块  一开始我使用的是 livere (来必力) 的评论，但是后来浏览了众多博客之后，发现使用 Twikoo 评论的比较多，所以我就萌生了修改评论的方法。而且 Twikoo 评论确实比较好看。 Twikoo 是无后端的网站评论系统，基于腾讯云开发，可以查看其 官方文档。 部署 Twikoo 评论我们可以使用免费的 Vercel 进行部署 Twikoo 评论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo 博客引入 Twikoo 评论">
+<meta property="og:url" content="https://bczhang717.github.io/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/index.html">
+<meta property="og:site_name" content="欢迎来到爱谦 717 的博客">
+<meta property="og:description" content="前言 Butterfly 官方文档的评论模块  一开始我使用的是 livere (来必力) 的评论，但是后来浏览了众多博客之后，发现使用 Twikoo 评论的比较多，所以我就萌生了修改评论的方法。而且 Twikoo 评论确实比较好看。 Twikoo 是无后端的网站评论系统，基于腾讯云开发，可以查看其 官方文档。 部署 Twikoo 评论我们可以使用免费的 Vercel 进行部署 Twikoo 评论">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bczhang717.github.io/img/default5.webp">
+<meta property="article:published_time" content="2025-08-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-27T14:31:26.655Z">
+<meta property="article:author" content="bcZhang">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Butterfly">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bczhang717.github.io/img/default5.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Hexo 博客引入 Twikoo 评论",
+  "url": "https://bczhang717.github.io/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/",
+  "image": "https://bczhang717.github.io/img/default5.webp",
+  "datePublished": "2025-08-26T16:00:00.000Z",
+  "dateModified": "2025-08-27T14:31:26.655Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "bcZhang",
+      "url": "https://bczhang717.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/icon.webp"><link rel="canonical" href="https://bczhang717.github.io/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":550,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hexo 博客引入 Twikoo 评论',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/style.css"><style>#article-container.post-content h1:before, h2:before, h3:before, h4:before, h5:before, h6:before { -webkit-animation: avatar_turn_around 1s linear infinite; -moz-animation: avatar_turn_around 1s linear infinite; -o-animation: avatar_turn_around 1s linear infinite; -ms-animation: avatar_turn_around 1s linear infinite; animation: avatar_turn_around 1s linear infinite; }</style><link rel="stylesheet" href="/css/cursors.css"><link rel="stylesheet" href="/css/iconfont.css"><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(/img/error-page.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-a-homezhuyefangzijia"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-wenjianjia"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwomen"></i><span> 关于我</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw iconfont icon-qita"></i><span> 其他</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw iconfont icon-lianjie"></i><span> 优质分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw iconfont icon-yinle"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw iconfont icon-tushu"></i><span> 推荐书籍</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/default5.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">欢迎来到爱谦 717 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Hexo 博客引入 Twikoo 评论</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-a-homezhuyefangzijia"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-wenjianjia"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwomen"></i><span> 关于我</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw iconfont icon-qita"></i><span> 其他</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw iconfont icon-lianjie"></i><span> 优质分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw iconfont icon-yinle"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw iconfont icon-tushu"></i><span> 推荐书籍</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Hexo 博客引入 Twikoo 评论</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-08-26T16:00:00.000Z" title="发表于 2025-08-27 00:00:00">2025-08-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Butterfly/">Butterfly</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">715</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://butterfly.js.org/posts/4aa8abbe/#%E8%A9%95%E8%AB%96">Butterfly 官方文档的评论模块</a></p>
+</blockquote>
+<p>一开始我使用的是 <code>livere (来必力)</code> 的评论，但是后来浏览了众多博客之后，发现使用 <code>Twikoo</code> 评论的比较多，所以我就萌生了修改评论的方法。而且 <code>Twikoo</code> 评论确实比较好看。</p>
+<p><code>Twikoo</code> 是无后端的网站评论系统，基于腾讯云开发，可以查看其 <a target="_blank" rel="noopener" href="https://twikoo.js.org/quick-start.html#%E7%8E%AF%E5%A2%83%E5%88%9D%E5%A7%8B%E5%8C%96">官方文档</a>。</p>
+<h1 id="部署-Twikoo-评论"><a href="#部署-Twikoo-评论" class="headerlink" title="部署 Twikoo 评论"></a>部署 Twikoo 评论</h1><p>我们可以使用免费的 <code>Vercel</code> 进行部署 <code>Twikoo</code> 评论，否则就要使用服务器去部署了。</p>
+<p>官方文档：<a target="_blank" rel="noopener" href="https://twikoo.js.org/backend.html#vercel-%E9%83%A8%E7%BD%B2">Vercel 部署 Twikoo</a></p>
+<p>下面来详细的介绍部署过程。</p>
+<h2 id="申请-MongoDB-Atlas-账号"><a href="#申请-MongoDB-Atlas-账号" class="headerlink" title="申请 MongoDB Atlas 账号"></a>申请 MongoDB Atlas 账号</h2><p>MongoDB Atlas 是 MongoDB Inc 提供的 MongoDB 数据库托管服务。免费账户可以永久使用 500 MiB 的数据库，足够存储 Twikoo 评论使用。</p>
+<p>首先进入 <a target="_blank" rel="noopener" href="https://www.mongodb.com/cloud/atlas/register">MongoDB Atlas 注册界面</a> 进行用户注册，这里我选择使用我的 Google 账号进行登录。</p>
+<p>然后就可以进入一个介绍页面了，你可以选择跳过，也可以按照自己的需求填写。</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827214224054.png" alt="image-20250827214223954" style="zoom:50%;" />
+
+<p>接下来我们选择免费的 MongoDB，这里我选择 HK，然后点击 <code>Create Deployment</code> 即可。</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827214552122.png" alt="image-20250827214552014" style="zoom:50%;" />
+
+<p>然后我们需要创建数据库用户，并指定密码</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827214851215.png" alt="image-20250827214851113" style="zoom:50%;" />
+
+<p>创建完用户以后，就可以 close 了。接下来在 Network Access 页面点击 Add IP Address 添加网络白名单。因为 Vercel 的出口地址不固定，所以我们这里 Access List Entry 输入 <code>0.0.0.0/0</code>（允许所有 IP 地址的连接）。</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827215202580.png" alt="image-20250827215202431" style="zoom:50%;" />
+
+<p>接下来我们切换到 Clusters 标签，选择 Connect。</p>
+<p><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827215354496.png" alt="image-20250827215354398"></p>
+<p>接下来选择连接方式为 <code>Driver</code> ，并复制连接信息。</p>
+<p><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827215620020.png" alt="image-20250827215619900"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mongodb+srv://bczhang:&lt;db_password&gt;@myblog.yd61ctz.mongodb.net/?retryWrites=<span class="literal">true</span>&amp;w=majority&amp;appName=myblog</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改为</span></span><br><span class="line"></span><br><span class="line">mongodb+srv://bczhang:你刚刚设置的数据库密码@myblog.yd61ctz.mongodb.net/?retryWrites=<span class="literal">true</span>&amp;w=majority&amp;appName=myblog</span><br></pre></td></tr></table></figure>
+
+<h2 id="Vercel-部署-Twikoo"><a href="#Vercel-部署-Twikoo" class="headerlink" title="Vercel 部署 Twikoo"></a>Vercel 部署 Twikoo</h2><p>直接点击链接进行部署：<a target="_blank" rel="noopener" href="https://vercel.com/new/clone?repository-url=https://github.com/twikoojs/twikoo/tree/main/src/server/vercel-min">New Project-Vercel</a> ，需要进行登录，我这里选择 Github 登录。</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827220505017.png" alt="image-20250827220504933" style="zoom:67%;" />
+
+<p>接下来等待 Vercel 部署即可，时间可能会比较久。</p>
+<p>部署完成后按照下图步骤依次执行：</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827221132455.png" alt="image-20250827221132319" style="zoom:67%;" />
+
+<p>接下来进入 <code>Deployment Protection</code> ，设置 <code>Vercel Authentication</code> 为 Disabled，并 Save 保存。</p>
+<p><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827221354683.png" alt="image-20250827221354578"></p>
+<p>接下来按照下图进行：</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827221520761.png" alt="image-20250827221520622" style="zoom:67%;" />
+
+<p>弹出的窗口中继续点击 <code>Redeploy</code> 进行重新部署，等待完成即可。</p>
+<img src = "https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827221615202.png" style="zoom:67%;" />
+
+<p>部署成功后会显示 “云函数运行正常 …”，然后复制 Domains 下的一个链接，作为 Butterfly 集成 Twikoo 的 <code>envId</code> 。</p>
+<p><img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250827222114826.png" alt="image-20250827222114724"></p>
+<h1 id="Twikoo-接入-Butterfly"><a href="#Twikoo-接入-Butterfly" class="headerlink" title="Twikoo 接入 Butterfly"></a>Twikoo 接入 Butterfly</h1><p>回到博客中 Butterfly 主题的配置文件 <code>_config.butterfly.yml</code> ，修改如下配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">comments:</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">Twikoo</span> <span class="comment"># 修改评论模块</span></span><br><span class="line">  <span class="attr">text:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">lazyload:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">count:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">card_post_count:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Twikoo</span></span><br><span class="line"><span class="attr">twikoo:</span></span><br><span class="line">  <span class="attr">envId:</span> <span class="string">https://xxxxxxxxxxx.vercel.app</span> <span class="comment"># 粘贴复制的内容，前面需要加 https://</span></span><br><span class="line">  <span class="attr">region:</span></span><br><span class="line">  <span class="attr">visitor:</span> <span class="literal">true</span> <span class="comment"># 是否展示文章阅读数</span></span><br><span class="line">  <span class="attr">option:</span></span><br></pre></td></tr></table></figure>
+
+<p>随后使用 <code>hexo clean &amp;&amp; hexo generate &amp;&amp; hexo server</code> 命令即可本地预览是否配置 Twikoo 评论成功。</p>
+<p><img src="C:/Users/zbczb/AppData/Roaming/Typora/typora-user-images/image-20250827223126392.png" alt="image-20250827223126392"></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Hexo/">Hexo</a><a class="post-meta__tags" href="/tags/Butterfly/">Butterfly</a></div><div class="post-share"><div class="social-share" data-image="/img/default5.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/QQ.png" target="_blank"><img class="post-qr-code-img" src="/img/QQ.png" alt="QQ"/></a><div class="post-qr-code-desc">QQ</div></li><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/08/26/%E9%AB%98%E5%8F%AF%E7%94%A8/%E5%9B%9B%E5%A4%A7%E6%9C%8D%E5%8A%A1%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/" title="四大服务限流算法"><img class="cover" src="/img/default2.webp" onerror="onerror=null;src='/img/error-page.png'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">四大服务限流算法</div></div><div class="info-2"><div class="info-item-1">这篇博客详细介绍了服务限流的概念、重要性以及四种常见的限流算法：固定窗口、滑动窗口、漏桶和令牌桶。博客通过生活化例子解释了限流的必要性，包括防止系统过载、保证服务质量、抵御攻击等。固定窗口算法简单但存在临界问题，滑动窗口算法通过更细粒度的时间划分改善了这一问题，漏桶算法以恒定速率处理请求但无法应对突发流量，而令牌桶算法则结合了平均速率控制和突发流量处理的优势，是实际应用中最常用的方案。博客还讨论了限流对象的选择（如IP、业务ID等）以及单机限流（基于Guava的RateLimiter）和分布式限流（基于Redisson）的实现方式，为构建高可用系统提供了全面的技术指导。</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="avatar"/></div><div class="author-info-name">bcZhang</div><div class="author-info-description">永远相信美好的事情即将发生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/bcZhang"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/bcZhang" target="_blank" title="GitHub"><i class="fab fa-github fa-spin" style="color: #606dd2;"></i></a><a class="social-icon" href="/img/QQ-chat.jpg" target="_blank" title="QQ"><i class="fab fa-qq fa-shake" style="color: #74c0fc;"></i></a><a class="social-icon" href="/img/chat.png" target="_blank" title="微信"><i class="fab fa-weixin fa-bounce" style="color: #63bba0;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到爱谦 717 的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2-Twikoo-%E8%AF%84%E8%AE%BA"><span class="toc-number">2.</span> <span class="toc-text">部署 Twikoo 评论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B3%E8%AF%B7-MongoDB-Atlas-%E8%B4%A6%E5%8F%B7"><span class="toc-number">2.1.</span> <span class="toc-text">申请 MongoDB Atlas 账号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vercel-%E9%83%A8%E7%BD%B2-Twikoo"><span class="toc-number">2.2.</span> <span class="toc-text">Vercel 部署 Twikoo</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Twikoo-%E6%8E%A5%E5%85%A5-Butterfly"><span class="toc-number">3.</span> <span class="toc-text">Twikoo 接入 Butterfly</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/" title="Hexo 博客引入 Twikoo 评论"><img src="/img/default5.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="Hexo 博客引入 Twikoo 评论"/></a><div class="content"><a class="title" href="/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/" title="Hexo 博客引入 Twikoo 评论">Hexo 博客引入 Twikoo 评论</a><time datetime="2025-08-26T16:00:00.000Z" title="发表于 2025-08-27 00:00:00">2025-08-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/MySQL/MySQL%20%E4%B8%AD%E7%9A%84%20MVCC/" title="MySQL 中的 MVCC 与事务隔离级别的实现"><img src="/img/default3.jpg" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="MySQL 中的 MVCC 与事务隔离级别的实现"/></a><div class="content"><a class="title" href="/2025/08/26/MySQL/MySQL%20%E4%B8%AD%E7%9A%84%20MVCC/" title="MySQL 中的 MVCC 与事务隔离级别的实现">MySQL 中的 MVCC 与事务隔离级别的实现</a><time datetime="2025-08-25T16:00:00.000Z" title="发表于 2025-08-26 00:00:00">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/%E9%AB%98%E5%8F%AF%E7%94%A8/%E5%9B%9B%E5%A4%A7%E6%9C%8D%E5%8A%A1%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/" title="四大服务限流算法"><img src="/img/default2.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="四大服务限流算法"/></a><div class="content"><a class="title" href="/2025/08/26/%E9%AB%98%E5%8F%AF%E7%94%A8/%E5%9B%9B%E5%A4%A7%E6%9C%8D%E5%8A%A1%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/" title="四大服务限流算法">四大服务限流算法</a><time datetime="2025-08-25T16:00:00.000Z" title="发表于 2025-08-26 00:00:00">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/25/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" title="如何保证缓存与数据库的一致性"><img src="/img/default5.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="如何保证缓存与数据库的一致性"/></a><div class="content"><a class="title" href="/2025/08/25/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7/" title="如何保证缓存与数据库的一致性">如何保证缓存与数据库的一致性</a><time datetime="2025-08-24T16:00:00.000Z" title="发表于 2025-08-25 00:00:00">2025-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/25/MySQL/MySQL%20%E4%B8%89%E5%A4%A7%E6%97%A5%E5%BF%97/" title="MySQL 三大日志与两阶段提交"><img src="/img/default4.png" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="MySQL 三大日志与两阶段提交"/></a><div class="content"><a class="title" href="/2025/08/25/MySQL/MySQL%20%E4%B8%89%E5%A4%A7%E6%97%A5%E5%BF%97/" title="MySQL 三大日志与两阶段提交">MySQL 三大日志与两阶段提交</a><time datetime="2025-08-24T16:00:00.000Z" title="发表于 2025-08-25 00:00:00">2025-08-25</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By bcZhang</span></div><div class="footer_custom_text">永远相信的美好的事情即将发生🥰</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo-bczhang717s-projects.vercel.app',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://twikoo-bczhang717s-projects.vercel.app',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><div class="aplayer no-destroy" data-id="14188285995" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true" data-order="random"> </div><script src="/js/snow.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="I,LOVE,YOU" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="请输入关键词" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
