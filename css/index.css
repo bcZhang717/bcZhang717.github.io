@@ -5703,12 +5703,12 @@ blockquote.pullquote.right {
   margin: 10px 0;
   color: var(--font-color) !important;
   text-decoration: none !important;
-  background: var(--reward-pop);
+  background: rgba(93,117,137,0.478);
   border-radius: 10px;
   padding: 12px;
 }
 .link_card:hover {
-  background: #9370db;
+  background: #00769f;
   color: #fff !important;
 }
 .link_card .link_icon,
