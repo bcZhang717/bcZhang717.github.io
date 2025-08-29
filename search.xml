@@ -171,9 +171,9 @@
       
         <tags>
             
-            <tag> MySQL </tag>
-            
             <tag> Redis </tag>
+            
+            <tag> MySQL </tag>
             
         </tags>
       
@@ -198,9 +198,9 @@
       
         <tags>
             
-            <tag> MySQL </tag>
-            
             <tag> Redis </tag>
+            
+            <tag> MySQL </tag>
             
             <tag> 缓存 </tag>
             
@@ -252,13 +252,13 @@
       
         <tags>
             
-            <tag> MySQL </tag>
-            
-            <tag> 日志 </tag>
-            
             <tag> Redis </tag>
             
+            <tag> MySQL </tag>
+            
             <tag> 持久化 </tag>
+            
+            <tag> 日志 </tag>
             
         </tags>
       
