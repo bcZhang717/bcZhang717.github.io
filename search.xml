@@ -316,9 +316,9 @@
       
         <tags>
             
-            <tag> 分布式锁 </tag>
-            
             <tag> Redis </tag>
+            
+            <tag> 分布式锁 </tag>
             
             <tag> Redisson </tag>
             
