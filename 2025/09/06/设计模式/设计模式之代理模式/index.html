@@ -1,0 +1,424 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>设计模式之代理模式 | 欢迎来到爱谦 717 的博客</title><meta name="author" content="bcZhang"><meta name="copyright" content="bcZhang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="代理模式概览代理模式是一种结构型模式，其特点就是 使用代理对象来代替对真实对象的访问，这样就可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。  代理模式总结一句话就是：通过一个中间人 (代理) 去访问真正的对象。  代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。 代理模式的最经典直接的生活化案例就是 代购。 假设你想买">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之代理模式">
+<meta property="og:url" content="https://bczhang717.github.io/2025/09/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="欢迎来到爱谦 717 的博客">
+<meta property="og:description" content="代理模式概览代理模式是一种结构型模式，其特点就是 使用代理对象来代替对真实对象的访问，这样就可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。  代理模式总结一句话就是：通过一个中间人 (代理) 去访问真正的对象。  代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。 代理模式的最经典直接的生活化案例就是 代购。 假设你想买">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bczhang717.github.io/img/default2.webp">
+<meta property="article:published_time" content="2025-09-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-06T13:52:49.738Z">
+<meta property="article:author" content="bcZhang">
+<meta property="article:tag" content="代理模式">
+<meta property="article:tag" content="动态代理">
+<meta property="article:tag" content="静态代理">
+<meta property="article:tag" content="JDK 动态代理">
+<meta property="article:tag" content="CGLIB 动态代理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bczhang717.github.io/img/default2.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "设计模式之代理模式",
+  "url": "https://bczhang717.github.io/2025/09/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/",
+  "image": "https://bczhang717.github.io/img/default2.webp",
+  "datePublished": "2025-09-05T16:00:00.000Z",
+  "dateModified": "2025-09-06T13:52:49.738Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "bcZhang",
+      "url": "https://bczhang717.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/icon.webp"><link rel="canonical" href="https://bczhang717.github.io/2025/09/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":550,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '设计模式之代理模式',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/style.css"><style>#article-container.post-content h1:before, h2:before, h3:before, h4:before, h5:before, h6:before { -webkit-animation: avatar_turn_around 1s linear infinite; -moz-animation: avatar_turn_around 1s linear infinite; -o-animation: avatar_turn_around 1s linear infinite; -ms-animation: avatar_turn_around 1s linear infinite; animation: avatar_turn_around 1s linear infinite; }</style><link rel="stylesheet" href="/css/cursors.css"><link rel="stylesheet" href="/css/iconfont.css"><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/commons.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-a-homezhuyefangzijia"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-wenjianjia"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwomen"></i><span> 关于我</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw iconfont icon-qita"></i><span> 其他</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw iconfont icon-lianjie"></i><span> 优质分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw iconfont icon-yinle"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw iconfont icon-tushu"></i><span> 推荐书籍</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/default2.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">欢迎来到爱谦 717 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">设计模式之代理模式</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-a-homezhuyefangzijia"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-wenjianjia"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwomen"></i><span> 关于我</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw iconfont icon-qita"></i><span> 其他</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw iconfont icon-lianjie"></i><span> 优质分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw iconfont icon-yinle"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw iconfont icon-tushu"></i><span> 推荐书籍</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">设计模式之代理模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-09-05T16:00:00.000Z" title="发表于 2025-09-06 00:00:00">2025-09-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div class="ai-summary"><div class="ai-explanation" style="display: block;" data-summary="这里是爱谦AI，这篇文章介绍了设计模式中的代理模式，包括其核心概念、应用场景以及静态代理和动态代理的区别。代理模式通过一个中间人（代理）来访问真实对象，在不修改原对象的前提下扩展其功能，例如在方法调用前后添加额外操作。文章以代购和电影票购买为例说明代理模式的实际应用，并详细讲解了静态代理的实现方式及其局限性，随后对比介绍了更加灵活的动态代理，特别是 JDK 动态代理的实现原理和步骤，包括 Proxy 类和 InvocationHandler 接口的作用，以及如何通过动态代理实现方法调用前后的增强处理。">摘要正在生成中···</div><div class="ai-title"><div class="ai-title-left"><i class="fa-brands fa-slack"></i><div class="ai-title-text">爱谦のAI摘要</div></div><div class="ai-tag" id="ai-tag">qwen-turbo</div></div></div><h1 id="代理模式概览"><a href="#代理模式概览" class="headerlink" title="代理模式概览"></a>代理模式概览</h1><p>代理模式是一种结构型模式，其特点就是 <strong>使用代理对象来代替对真实对象的访问</strong>，这样就可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。</p>
+<blockquote>
+<p>代理模式总结一句话就是：<strong>通过一个中间人 (代理) 去访问真正的对象。</strong></p>
+</blockquote>
+<p>代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。</p>
+<p>代理模式的最经典直接的生活化案例就是 <strong>代购</strong>。</p>
+<p>假设你想买一款只在国外售卖的商品 (比如某款限量版球鞋或者化妆品)，但你本人没法亲自去国外购买。于是你找了一个 <strong>代购</strong>，他帮你去国外购买并寄回给你。</p>
+<p>在这个过程中，主要分为以下几个角色：</p>
+<ul>
+<li>真实对象：你自己 (真正想买商品的人)</li>
+<li>代理对象 (proxy)：代购的人</li>
+<li>目标：代购人代替你去买你需要的商品，你自己没有必要亲自去买</li>
+</ul>
+<p>代购并不改变你最终要买的东西，而是 <strong>代替你执行购买操作</strong>，并且在过程中可能还附加了 <strong>额外服务 (比如验货、打包、国际邮寄等)</strong>。在程序中我们通常把这种 “额外服务” 叫做 “功能增强”，这也是代理模式的典型应用：<strong>扩展目标对象的功能</strong>。</p>
+<p>再来看一个买电影票的案例：你想看一部电影，但并不是直接去电影院柜台买票，而是通过 <strong>猫眼、淘票票、电影院官网等平台</strong> 买票。这些平台就是电影票的代理。</p>
+<p>在这个过程中，主要分为以下几个角色：</p>
+<ul>
+<li>真实对象：电影院售票系统 (真正出售电影票的系统)</li>
+<li>代理对象：第三方购票平台 (如猫眼、淘票票)</li>
+<li>目标：你通过代理平台买票，平台再与电影院系统交互</li>
+</ul>
+<p>代理平台并没有真正 “放电影”，它只是 <strong>代替用户去访问影院系统，完成订票流程</strong>，有时还提供额外功能 (如选座、优惠、评价等)。</p>
+<p>以上两个案例就是代理模式最典型的使用了，而代理模式也是有分类的，具体如下图：</p>
+<img src="https://picgo-blog-1335849645.cos.ap-guangzhou.myqcloud.com/images/20250906123018688.png" alt="image-20250906123018517" style="zoom:67%;" />
+
+<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>静态代理中，我们对目标对象的每个方法的增强都是 <strong>手动完成的</strong>，非常不灵活 (比如接口一旦新增加方法，目标对象和代理对象都要进行修改) 且麻烦 (需要对每个目标类都单独写一个代理类)。实际应用场景非常非常少，日常开发几乎看不到使用静态代理的场景。</p>
+<p>上面我们是从实现和应用角度来说的静态代理，从 JVM 层面来说， <strong>静态代理在编译时就将接口、实现类、代理类这些都变成了一个个实际的 class 文件。</strong></p>
+<p>静态代理实现步骤:</p>
+<ol>
+<li><p>定义一个接口及其实现类；</p>
+</li>
+<li><p>创建一个代理类同样实现这个接口</p>
+</li>
+<li><p>将目标对象注入进代理类，然后在代理类的对应方法调用目标类中的对应方法。</p>
+</li>
+</ol>
+<p>这样的话，我们就可以通过代理类屏蔽对目标对象的访问，并且可以在目标方法执行前后做一些自己想做的事情。</p>
+<p>下面是一个静态代理的简单实现。</p>
+<p>1、先定义接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发送短信接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">SmsService</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sendMessage</span><span class="params">(String message)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、再定义接口的实现 (目标对象、被代理的类)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发送短信实现类(目标对象、被代理的类)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SmsServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">SmsService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendMessage</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;发送短信，内容是：&quot;</span> + message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、定义代理类，执行代理 (调用目标方法并可对原始功能进行扩展)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代理类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SmsProxy</span> <span class="keyword">implements</span> <span class="title class_">SmsService</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SmsService smsService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SmsProxy</span><span class="params">(SmsService smsService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.smsService = smsService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendMessage</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;发送短信前做一些事情 ...&quot;</span>);</span><br><span class="line">        smsService.sendMessage(message);</span><br><span class="line">        System.out.println(<span class="string">&quot;发送短信后做一些事情 ...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>4、客户端使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SmsService</span> <span class="variable">smsService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SmsServiceImpl</span>();</span><br><span class="line">        <span class="type">SmsProxy</span> <span class="variable">smsProxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SmsProxy</span>(smsService);</span><br><span class="line">        smsProxy.sendMessage(<span class="string">&quot;hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行之后控制台输出的内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">发送短信前做一些事情 ...</span><br><span class="line">发送短信，内容是：hello world</span><br><span class="line">发送短信后做一些事情 ...</span><br></pre></td></tr></table></figure>
+
+<p>通过以上的案例我们就已经实现了代理类对原始对象中 <code>sendMessage()</code> 方法的增强，这就是静态代理。</p>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>相比于静态代理来说，动态代理更加灵活。我们不需要针对每个目标类都单独创建一个代理类，并且也不需要我们必须实现接口，我们可以直接代理实现类。从 JVM 角度来说，<strong>动态代理是在运行时动态生成类字节码，并加载到 JVM 中的。</strong></p>
+<p>动态代理技术的最最典型的应该应该就是 Spring AOP 和 RPC 框架了，它们的实现都依赖了动态代理。动态代理在我们日常开发中使用得相对较少，但是在框架中几乎是必用的一门技术，学会了之后可以有助于我们在源码阅读时更容易理解。</p>
+<p>而对于 Java 来说，动态代理的实现方式有很多种，比如 <strong>JDK 动态代理</strong>、<strong>CGLIB 动态代理</strong> 等等，这两种代理方式会注重讲解，并且它们之间的区别也会做相应说明。</p>
+<h2 id="JDK-动态代理"><a href="#JDK-动态代理" class="headerlink" title="JDK 动态代理"></a>JDK 动态代理</h2><h3 id="实现-JDK-动态代理"><a href="#实现-JDK-动态代理" class="headerlink" title="实现 JDK 动态代理"></a>实现 JDK 动态代理</h3><p>在 JDK 的动态代理中，存在两个核心：一个是 Proxy 类，位于 <code>java.lang.reflect.Proxy</code> 下，其中最核心的方法就是 <code>newProxyInstance()</code> ，其作用就是用来创建代理对象的，方法签名如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建代理对象</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> loader     目标对象的类加载器</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> interfaces 目标对象所实现的接口数组</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> h          处理器, 用户自定义处理代理逻辑, 调用的方法会转发给 InvocationHandler.invoke() 进行处理</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 创建的代理对象</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">newProxyInstance</span><span class="params">(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h)</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二个核心就是 InvocationHandler 接口，其中最重要的方法就是 <code>invoke()</code> 方法，用于处理代理方法的逻辑 (调用原始方法并提供功能增强)。同时该接口也是  <code>newProxyInstance()</code> 的第三个参数，因此我们可以直接 new 这个接口使用匿名内部类实现或者使用 Lambda 表达式简化又或者直接写一个类实现这个接口，传递参数时创建该类的对象。</p>
+<p><code>invoke()</code> 方法的方法签名如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户自定义处理代理逻辑</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> proxy  代理对象本身, 通过 Proxy.newProxyInstance() 返回的那个对象</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> method 表示当前被调用的接口方法的 Method 对象, 可以通过它获取方法名、参数类型等信息</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> args   表示调用方法时传入的实际参数, 是一个 Object 数组, 如果没有参数则为 null</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 被代理方法(原始方法)的返回值</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>你通过 <code>Proxy</code> 类的 <code>newProxyInstance()</code> 创建的代理对象在调用方法的时候，实际会调用到实现 <code>InvocationHandler</code> 接口的类的 <code>invoke()</code> 方法。 你可以在 <code>invoke()</code> 方法中自定义处理逻辑，比如在方法执行前后做一些事情。</p>
+</blockquote>
+<p>创建 JDK 动态代理的步骤是这样的：</p>
+<ol>
+<li>定义一个接口及其接口的实现</li>
+<li>定义一个类实现 <code>InvocationHandler</code> 接口并重写 <code>invoke()</code> 方法，我们在该方法中可以自定义处理逻辑并调用原始方法，这样就可以实现调用前后的功能增强</li>
+<li>通过 <code>newProxyInstance()</code> 方法创建代理对象，将实现 <code>InvocationHandler</code> 接口的类作为第三个参数传入。</li>
+</ol>
+<p>下面是 JDK 动态代理的一个简单案例。</p>
+<p>1、定义接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * JDK 动态代理接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Service</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">deSomething</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、实现接口 (目标对象、被代理的对象)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 被代理的类(目标对象、被代理的对象)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">Service</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deSomething</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;do something() ...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、定义 JDK 动态代理类，处理逻辑并进行增强</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动态代理类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServiceInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 被代理的对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ServiceInvocationHandler</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// 代理方法</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;可以在调用目标方法之前做一些事情 ...&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args); <span class="comment">// 调用目标方法</span></span><br><span class="line">        System.out.println(<span class="string">&quot;可以在调用目标方法之后做一些事情 ...&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们的动态代理对象调用原生方法的时候，最终实际上调用到的是 <code>invoke()</code> 方法，然后 <code>invoke()</code> 方法代替我们去调用了被代理对象的原生方法。</p>
+<p>4、获取代理对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代理对象工厂</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServiceFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">ServiceProxy</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="type">ClassLoader</span> <span class="variable">classLoader</span> <span class="operator">=</span> target.getClass().getClassLoader();</span><br><span class="line">        <span class="keyword">return</span> (Service) Proxy.newProxyInstance(</span><br><span class="line">                classLoader,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Service.class&#125;,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ServiceInvocationHandler</span>(target)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中第二个参数 <code>new Class[]&#123;Service.class&#125;</code> 也可以写为 <code>target.getClass().getInterfaces()</code> 。</p>
+<p>5、实际使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Service</span> <span class="variable">serviceProxy</span> <span class="operator">=</span> (Service) ServiceFactory.ServiceProxy(<span class="keyword">new</span> <span class="title class_">ServiceImpl</span>());</span><br><span class="line">        serviceProxy.deSomething();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行之后控制台输出的内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">可以在调用目标方法之前做一些事情 ...</span><br><span class="line"><span class="keyword">do</span> <span class="title function_">something</span><span class="params">()</span> ...</span><br><span class="line">可以在调用目标方法之后做一些事情 ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="JDK-动态代理的特性"><a href="#JDK-动态代理的特性" class="headerlink" title="JDK 动态代理的特性"></a>JDK 动态代理的特性</h3><p>JDK 动态代理是只能够 <strong>代理接口</strong> 的，并且是通过反射的机制在运行时动态生成代理类的</p>
+<h2 id="CGLIB-动态代理"><a href="#CGLIB-动态代理" class="headerlink" title="CGLIB 动态代理"></a>CGLIB 动态代理</h2><h3 id="实现-CGLIB-动态代理"><a href="#实现-CGLIB-动态代理" class="headerlink" title="实现 CGLIB 动态代理"></a>实现 CGLIB 动态代理</h3><p>为了避免 JDK 动态代理只能代理接口的缺点，我们可以使用 CGLIB 动态代理技术。CGLIB (Code Generation Library) 是一个基于 ASM 的字节码生成库，它允许我们在运行时对字节码进行修改和动态生成。<strong>CGLIB 通过继承方式实现代理</strong>。很多知名的开源框架都使用到了 CGLIB， 例如 Spring 中的 AOP 模块中：<strong>如果目标对象实现了接口，则默认采用 JDK 动态代理，否则采用 CGLIB 动态代理</strong>。</p>
+<p>CGLIB 动态代理中也存在两个核心。第一个核心就是 <code>MethodInterceptor</code> 接口中的 <code>intercept()</code> 方法。作用就是拦截需要代理的方法，进行自定义逻辑或增强，其方法签名如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">MethodInterceptor</span> <span class="keyword">extends</span> <span class="title class_">Callback</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 拦截代理方法, 自定义增强逻辑</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> obj 代理对象本身 (注意不是原始对象, 如果使用 method.invoke(o, args) 会导致循环调用)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method 被代理方法、需要增强的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args 代理方法参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> proxy 高性能的方法调用机制, 避免反射开销</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 代理方法返回值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object obj, java.lang.reflect.Method method, Object[] args, MethodProxy proxy)</span> <span class="keyword">throws</span> Throwable;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二个比较核心的就是 <code>Enhancer</code> 类。这是代理类，我们需要创建 <code>Enhancer</code> 对象，并设置类加载器、被代理类、方法回调 (方法增强) 等参数完成代理，最后使用 <code>Enhancer.create()</code> 创建代理类</p>
+<p>创建 CGLIB 动态代理类的基本步骤是：</p>
+<ol>
+<li><p>先引入 CGLIB 的依赖</p>
+</li>
+<li><p>定义一个类</p>
+</li>
+<li><p>自定义 <code>MethodInterceptor</code> 并重写 <code>intercept()</code> 方法，<code>intercept()</code> 用于拦截增强被代理类的方法，和 JDK 动态代理中的 <code>invoke()</code> 方法类似</p>
+</li>
+<li><p>通过 <code>Enhancer</code> 类的 <code>create()</code> 创建代理类；</p>
+</li>
+</ol>
+<p>下面是一个 CGLIB 动态代理的简单案例。</p>
+<p>1、引入 CGLIB 依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Cglib --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>2、创建被代理类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 被代理的类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SmsService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">send</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;send message: &quot;</span> + message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、定义方法拦截器 (实现 <code>MethodInterceptor</code> 并重写 <code>intercept()</code> 方法)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 方法拦截器, 对目标方法进行代理、增强</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SmsInterceptor</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object obj, Method method, Object[] args, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;在方法之前做一些事情 ...&quot;</span>);</span><br><span class="line">        <span class="comment">// 调用目标方法</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> methodProxy.invokeSuper(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;在方法之后做一些事情 ...&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>4、新建代理类，实现代理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取代理类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SmsFactory</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getProxy</span><span class="params">(Class&lt;?&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建代理增强类</span></span><br><span class="line">        <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>();</span><br><span class="line">        <span class="comment">// 设置类加载器</span></span><br><span class="line">        enhancer.setClassLoader(clazz.getClassLoader());</span><br><span class="line">        <span class="comment">// 设置被代理类</span></span><br><span class="line">        enhancer.setSuperclass(clazz);</span><br><span class="line">        <span class="comment">// 设置方法拦截器</span></span><br><span class="line">        enhancer.setCallback(<span class="keyword">new</span> <span class="title class_">SmsInterceptor</span>());</span><br><span class="line">        <span class="comment">// 创建代理类</span></span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5、实际调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SmsService</span> <span class="variable">proxy</span> <span class="operator">=</span> (SmsService) SmsFactory.getProxy(SmsService.class);</span><br><span class="line">        proxy.send(<span class="string">&quot;hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行之后控制台输出的内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在方法之前做一些事情 ...</span><br><span class="line">send message: hello world</span><br><span class="line">在方法之后做一些事情 ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="CGLIB-动态代理特性"><a href="#CGLIB-动态代理特性" class="headerlink" title="CGLIB 动态代理特性"></a>CGLIB 动态代理特性</h3><p>CGLIB 是通过生成被代理类的子类来实现动态代理的，是需要有继承关系的。因此被 <code>final</code> 修饰的类或方法是不能被代理的；<code>private</code> 修饰的方法也是不能被代理的，因为私有方法不能被继承。</p>
+<h2 id="JDK-和-CGLIB-动态代理对比"><a href="#JDK-和-CGLIB-动态代理对比" class="headerlink" title="JDK 和 CGLIB 动态代理对比"></a>JDK 和 CGLIB 动态代理对比</h2><ul>
+<li>JDK 动态代理只能代理实现了接口的类或者直接代理接口，而 CGLIB 可以代理未实现任何接口的类。 </li>
+<li>CGLIB 动态代理是通过生成一个被代理类的子类来拦截被代理类的方法调用，因此不能代理声明为 <code>final</code> 类型的类和方法，<code>private</code> 方法也无法代理。</li>
+</ul>
+<p>就二者的效率来说，大部分情况都是 JDK 动态代理更优秀，随着 JDK 版本的升级，这个优势更加明显。</p>
+<h1 id="静态代理和动态代理对比"><a href="#静态代理和动态代理对比" class="headerlink" title="静态代理和动态代理对比"></a>静态代理和动态代理对比</h1><p><strong>灵活性</strong>：静态代理更加灵活，不需要必须实现接口，可以直接代理实现类，并且可以不需要针对每个目标类都创建一个代理类。但是在静态代理中，接口一旦新增加方法，目标对象和代理对象都要进行修改，这是非常麻烦的。</p>
+<p><strong>JVM 层面</strong>：静态代理在编译时就将接口、实现类、代理类这些都变成了一个个实际的 class 文件。而动态代理是在运行时动态生成类字节码，并加载到 JVM 中的。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">代理模式</a><a class="post-meta__tags" href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">动态代理</a><a class="post-meta__tags" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86/">静态代理</a><a class="post-meta__tags" href="/tags/JDK-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">JDK 动态代理</a><a class="post-meta__tags" href="/tags/CGLIB-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">CGLIB 动态代理</a></div><div class="post-share"><div class="social-share" data-image="/img/default2.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/QQ.png" target="_blank"><img class="post-qr-code-img" src="/img/QQ.png" alt="QQ"/></a><div class="post-qr-code-desc">QQ</div></li><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/09/01/%E9%A1%B9%E7%9B%AE%E5%B0%8F%E6%8A%80%E5%B7%A7/%E5%89%8D%E7%AB%AF%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="Long/long 的精度丢失问题"><img class="cover" src="/img/default1.webp" onerror="onerror=null;src='/img/error-page.png'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Long/long 的精度丢失问题</div></div><div class="info-2"><div class="info-item-1">这篇文章主要介绍了前端在接收后端Long/long类型数据时出现的精度丢失问题，特别是当数据超过16位时JavaScript的Number类型无法正确显示导致的问题。 文章通过举例说明了现象，并提出了两种解决方案：局部解决和全局解决。 局部解决是在具体字段上添加注解，而全局解决则通过配置Jackson的ObjectMapper或Jackson2ObjectMapperBuilder来统一处理所有Long类型数据，将其转换为字符串以避免精度丢失。 同时文章还拓展了如何全局配置时间格式，提升开发效率和代码一致性。</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="avatar"/></div><div class="author-info-name">bcZhang</div><div class="author-info-description">永远相信美好的事情即将发生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/bcZhang"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/bcZhang" target="_blank" title="GitHub"><i class="fab fa-github fa-spin" style="color: #606dd2;"></i></a><a class="social-icon" href="/img/QQ-chat.jpg" target="_blank" title="QQ"><i class="fab fa-qq fa-shake" style="color: #74c0fc;"></i></a><a class="social-icon" href="/img/chat.png" target="_blank" title="微信"><i class="fab fa-weixin fa-bounce" style="color: #63bba0;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到爱谦 717 的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="toc-number">1.</span> <span class="toc-text">代理模式概览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">静态代理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.1.</span> <span class="toc-text">JDK 动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-JDK-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.1.1.</span> <span class="toc-text">实现 JDK 动态代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-number">3.1.2.</span> <span class="toc-text">JDK 动态代理的特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CGLIB-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">CGLIB 动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-CGLIB-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.2.1.</span> <span class="toc-text">实现 CGLIB 动态代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CGLIB-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E7%89%B9%E6%80%A7"><span class="toc-number">3.2.2.</span> <span class="toc-text">CGLIB 动态代理特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK-%E5%92%8C-CGLIB-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%AF%B9%E6%AF%94"><span class="toc-number">3.3.</span> <span class="toc-text">JDK 和 CGLIB 动态代理对比</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%92%8C%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text">静态代理和动态代理对比</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" title="设计模式之代理模式"><img src="/img/default2.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="设计模式之代理模式"/></a><div class="content"><a class="title" href="/2025/09/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" title="设计模式之代理模式">设计模式之代理模式</a><time datetime="2025-09-05T16:00:00.000Z" title="发表于 2025-09-06 00:00:00">2025-09-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/01/%E9%A1%B9%E7%9B%AE%E5%B0%8F%E6%8A%80%E5%B7%A7/%E5%89%8D%E7%AB%AF%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="Long/long 的精度丢失问题"><img src="/img/default1.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="Long/long 的精度丢失问题"/></a><div class="content"><a class="title" href="/2025/09/01/%E9%A1%B9%E7%9B%AE%E5%B0%8F%E6%8A%80%E5%B7%A7/%E5%89%8D%E7%AB%AF%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="Long/long 的精度丢失问题">Long/long 的精度丢失问题</a><time datetime="2025-08-31T16:00:00.000Z" title="发表于 2025-09-01 00:00:00">2025-09-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/28/Butterfly/Butterfly%20%E5%BC%95%E5%85%A5%E5%8D%A1%E7%89%87%E9%93%BE%E6%8E%A5/" title="Butterfly 引入卡片链接"><img src="/img/default5.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="Butterfly 引入卡片链接"/></a><div class="content"><a class="title" href="/2025/08/28/Butterfly/Butterfly%20%E5%BC%95%E5%85%A5%E5%8D%A1%E7%89%87%E9%93%BE%E6%8E%A5/" title="Butterfly 引入卡片链接">Butterfly 引入卡片链接</a><time datetime="2025-08-27T16:00:00.000Z" title="发表于 2025-08-28 00:00:00">2025-08-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/" title="Hexo 博客引入 Twikoo 评论"><img src="/img/default4.png" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="Hexo 博客引入 Twikoo 评论"/></a><div class="content"><a class="title" href="/2025/08/27/Butterfly/Hexo%20%E5%8D%9A%E5%AE%A2%E5%BC%95%E5%85%A5%20Twikoo%20%E8%AF%84%E8%AE%BA/" title="Hexo 博客引入 Twikoo 评论">Hexo 博客引入 Twikoo 评论</a><time datetime="2025-08-26T16:00:00.000Z" title="发表于 2025-08-27 00:00:00">2025-08-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/MySQL/MySQL%20%E4%B8%89%E5%A4%A7%E6%97%A5%E5%BF%97/" title="MySQL 三大日志与两阶段提交"><img src="/img/default1.webp" onerror="this.onerror=null;this.src='/img/error-page.png'" alt="MySQL 三大日志与两阶段提交"/></a><div class="content"><a class="title" href="/2025/08/26/MySQL/MySQL%20%E4%B8%89%E5%A4%A7%E6%97%A5%E5%BF%97/" title="MySQL 三大日志与两阶段提交">MySQL 三大日志与两阶段提交</a><time datetime="2025-08-25T16:00:00.000Z" title="发表于 2025-08-26 00:00:00">2025-08-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By bcZhang</span></div><div class="footer_custom_text">永远相信的美好的事情即将发生🥰</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://aiqian.online',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://aiqian.online',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><div class="aplayer no-destroy" data-id="14188285995" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true" data-order="random"> </div><script src="/js/snow.js"></script><script src="/js/commons.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="请输入关键词" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><!-- hexo injector body_end start --><script async src="//at.alicdn.com/t/font_2032782_8d5kxvn09md.js"></script><!-- hexo injector body_end end --></body></html>
