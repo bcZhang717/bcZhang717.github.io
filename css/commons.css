@@ -63,7 +63,7 @@ blockquote {
 
 /* 选中文字颜色 */
 *::selection {
-    background: #000000ad
+    background: #2effb7
 }
 
 /* 加粗文本颜色 */
